@@ -3,6 +3,7 @@ package com.turaapp.calculator;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -28,6 +29,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         button9 = findViewById(R.id.nine);
         buttonplus = findViewById(R.id.plus);
         buttonminus = findViewById(R.id.minus);
+        equal = findViewById(R.id.equally);
+        clear = findViewById(R.id.clear);
+        op1 = findViewById(R.id.op1);
         button1.setOnClickListener(this);
         button2.setOnClickListener(this);
         button3.setOnClickListener(this);
@@ -37,11 +41,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         button7.setOnClickListener(this);
         button8.setOnClickListener(this);
         button9.setOnClickListener(this);
-        resultlabel = findViewById(R.id.result);
-        resultlabel.setText(result.toString());
+        button0.setOnClickListener(this);
+        equal.setOnClickListener(this);
+        buttonminus.setOnClickListener(this);
+        buttonplus.setOnClickListener(this);
+        clear.setOnClickListener(this);
+        resultstring = findViewById(R.id.result);
+        op1 = findViewById(R.id.op1);
+
+
+
+        calculator = new Calculator();
 
     }
-    TextView resultlabel;
+
+    Button equal;
+    Calculator calculator;
+    TextView op1;
+    TextView resultstring;
     Button button1;
     Button button2;
     Button button3;
@@ -52,17 +69,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button button8;
     Button button9;
     Button button0;
+    Button clear;
     Button buttonplus;
     Button buttonminus;
-    Float result;
 
     @Override
     public void onClick(View v) {
         if (((Button)v).getText().toString().equals("+")){
-
+            calculator.operation = "+";
+            calculator.operant1 = Double.valueOf(resultstring.getText().toString());
+            op1.setText(resultstring.getText().toString());
+            resultstring.setText("0");
         }
         char c = ((Button)v).getText().toString().charAt(0);
+        if (((Button)v).getText().toString().equals("C")){
+            resultstring.setText("0");
+            op1.setText("");
+        }
         if (Character.isDigit(c)){
+            if (resultstring.getText().toString().equals("0")){
+                resultstring.setText("");
+                resultstring.setText(resultstring.getText().toString() + String.valueOf(c));
+            }
+            else {
+                resultstring.setText(resultstring.getText().toString() + String.valueOf(c));
+            }
+
+        }
+        Log.d("qweqwe", ((Button)v).getText().toString());
+        if (((Button)v).getText().toString().equals("=")){
+            Log.d("111", "onClick: 111");
+            if (calculator.operant1 != null){
+                Log.d("222", "onClick: 222");
+                calculator.operant1 = calculator.operant1 + Double.valueOf(resultstring.getText().toString());
+                op1.setText(calculator.operant1.toString());
+            }
 
         }
     }
