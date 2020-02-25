@@ -2,6 +2,7 @@ package com.turaapp.calculator;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         button7 = findViewById(R.id.seven);
         button8 = findViewById(R.id.eight);
         button9 = findViewById(R.id.nine);
+        devide = findViewById(R.id.devide);
+        buttonmultiply = findViewById(R.id.multiplybtn);
         buttonplus = findViewById(R.id.plus);
         buttonminus = findViewById(R.id.minus);
         equal = findViewById(R.id.equally);
@@ -42,12 +45,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         button8.setOnClickListener(this);
         button9.setOnClickListener(this);
         button0.setOnClickListener(this);
+        devide.setOnClickListener(this);
+        buttonmultiply.setOnClickListener(this);
         equal.setOnClickListener(this);
         buttonminus.setOnClickListener(this);
         buttonplus.setOnClickListener(this);
         clear.setOnClickListener(this);
         resultstring = findViewById(R.id.result);
         op1 = findViewById(R.id.op1);
+        spref = getPreferences(MODE_PRIVATE);
+        String saved = loadvalue();
+        if (saved != null) {
+            op1.setText(saved);
+        }
 
 
 
@@ -72,6 +82,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button clear;
     Button buttonplus;
     Button buttonminus;
+    Button buttonmultiply;
+    Button devide;
+    SharedPreferences spref;
+
+    void savestoryvalue(String value) {
+        SharedPreferences.Editor editor = spref.edit();
+        editor.putString("result",value);
+        editor.commit();
+    }
+    String loadvalue() {
+        return spref.getString("result",null);
+    }
 
     @Override
     public void onClick(View v) {
@@ -83,8 +105,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         char c = ((Button)v).getText().toString().charAt(0);
         if (((Button)v).getText().toString().equals("C")){
-            resultstring.setText("0");
+            resultstring.setText("");
             op1.setText("");
+        }
+        if (((Button)v).getText().toString().equals("-")){
+            calculator.operation = "-";
+            calculator.operant1 = Double.valueOf(resultstring.getText().toString());
+            op1.setText(resultstring.getText().toString());
+            resultstring.setText("0");
+        }
+        if (((Button)v).getText().toString().equals("×")) {
+            calculator.operation = "×";
+            calculator.operant1 = Double.valueOf(resultstring.getText().toString());
+            op1.setText(resultstring.getText().toString());
+            resultstring.setText("0");
+        }
+        Log.d("2",((Button)v).getText().toString());
+        if (((Button)v).getText().toString().equals("÷")) {
+            Log.d("1",((Button)v).getText().toString());
+            calculator.operation = "/";
+            calculator.operant1 = Double.valueOf(resultstring.getText().toString());
+            op1.setText(resultstring.getText().toString());
+            resultstring.setText("0");
         }
         if (Character.isDigit(c)){
             if (resultstring.getText().toString().equals("0")){
@@ -96,15 +138,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
         }
-        Log.d("qweqwe", ((Button)v).getText().toString());
         if (((Button)v).getText().toString().equals("=")){
-            Log.d("111", "onClick: 111");
-            if (calculator.operant1 != null){
-                Log.d("222", "onClick: 222");
-                calculator.operant1 = calculator.operant1 + Double.valueOf(resultstring.getText().toString());
-                op1.setText(calculator.operant1.toString());
+            if (calculator.operant1 != null) {
+                Log.d("wwww",calculator.operation);
+                if (calculator.operation == ("+")) {
+                    calculator.operant1 = calculator.operant1 + Double.valueOf(resultstring.getText().toString());
+                    op1.setText(calculator.operant1.toString());
+                }
+                if (calculator.operation == ("-")) {
+                    calculator.operant1 = calculator.operant1 - Double.valueOf(resultstring.getText().toString());
+                    op1.setText(calculator.operant1.toString());
+                }
+                if (calculator.operation == ("×")) {
+                    calculator.operant1 = calculator.operant1 * Double.valueOf(resultstring.getText().toString());
+                    op1.setText(calculator.operant1.toString());
+                }
+                if (calculator.operation == ("/")) {
+                    calculator.operant1 = calculator.operant1 / Double.valueOf(resultstring.getText().toString());
+                    op1.setText(calculator.operant1.toString());
+                }
+                String str = op1.getText().toString();
+                String[] array = str.split("\\.");
+                Log.d("3", array.toString());
+                if (array.length > 1) {
+                    if (array[1].equals("0")) {
+                        op1.setText(array[0]);
+                    }
+                    else {
+                        op1.setText(str);
+                    }
+                }
+                savestoryvalue(op1.getText().toString());
             }
-
         }
     }
 }
